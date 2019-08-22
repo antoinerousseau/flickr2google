@@ -1,0 +1,30 @@
+{
+  "name": "flickr2google",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Antoine Rousseau <antoine@rousseau.im>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^8.1.0",
+    "flickr-sdk": "^3.9.0",
+    "googleapis": "^42.0.0",
+    "request": "^2.88.0",
+    "standard-http-error": "^2.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "^1.18.2"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "scripts": {
+    "start": "./start.js"
+  },
+  "bin": {
+    "start": "./start.js"
+  }
+}
