@@ -12,3 +12,9 @@ And create a `.env` from `example.env`
 ## Run
 
     ./start.js
+
+## Daemonize
+
+You can use [PM2](https://github.com/Unitech/pm2)
+
+    pm2 start start.js --name flickr2google
