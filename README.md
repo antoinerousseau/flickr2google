@@ -7,7 +7,10 @@ It handles resuming if the script is stopped or exits, by storing processed phot
 
     yarn
 
-And create a `.env` from `example.env`
+And create a `.env` from `example.env`:
+
+- You need to [create a Flickr app](https://www.flickr.com/services/apps/create/apply/) to set the `FLICKR_APP_*` values
+- You need to [enable the Google Photos API](https://developers.google.com/photos/library/guides/get-started?hl=fr) to set the `GOOGLE_CLIENT_*` values
 
 ## Run
 
