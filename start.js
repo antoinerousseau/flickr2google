@@ -57,24 +57,20 @@ const flickr2google = async () => {
   )
 
   googleOauth.on("tokens", (tokens) => {
-    // TODO: handle long lasting scripts that could make the token expire
-    // console.log("tokens", tokens)
-    if (tokens.refresh_token) {
-      // store the refresh_token in my database!
+    if (!tokens.refresh_token && googleTokens) {
+      tokens.refresh_token = googleTokens.refresh_token // retrieve from before
     }
+    writeJson(GOOGLE_FILE_PATH, tokens)
   })
 
   const refreshTokenIfNeeded = async () => {
     if (googleTokens.expiry_date < Date.now() + 60000) {
       // expires in less than a minute
       console.warn("Warning: access token expired => refreshing")
+
       const { tokens } = await googleOauth.refreshToken(googleTokens.refresh_token)
-
       tokens.refresh_token = googleTokens.refresh_token // because it's not sent again, only the first time
-
       googleTokens = tokens // eslint-disable-line require-atomic-updates
-
-      writeJson(GOOGLE_FILE_PATH, tokens)
     }
   }
 
@@ -86,6 +82,7 @@ const flickr2google = async () => {
     const url = googleOauth.generateAuthUrl({
       access_type: "offline",
       scope: ["https://www.googleapis.com/auth/photoslibrary.appendonly"],
+      prompt: "consent", // to always get a refresh_token
     })
 
     console.log("Go to " + url)
@@ -95,8 +92,6 @@ const flickr2google = async () => {
     const { tokens } = await googleOauth.getToken(code)
     googleTokens = tokens
     googleOauth.setCredentials(googleTokens)
-
-    writeJson(GOOGLE_FILE_PATH, googleTokens)
   }
 
   // RETRIEVE PHOTO SETS (Flickr albums)
