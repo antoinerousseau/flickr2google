@@ -6,6 +6,7 @@ const { google } = require("googleapis")
 
 const { readJson, writeJson, fileExists, mkdir, prompt, transfert, post } = require("./utils")
 
+const CALLBACK_URL = "https://antoinerousseau.github.io/flickr2google/"
 const FLICKR_FILE_PATH = "flickr_tokens.json"
 const GOOGLE_FILE_PATH = "google_tokens.json"
 const ALBUMS_PATH = "albums"
@@ -30,11 +31,11 @@ const flickr2google = async () => {
   } catch (error) {
     const {
       body: { oauth_token: requestToken, oauth_token_secret: requestTokenSecret },
-    } = await flickrOauth.request("http://localhost:3000/oauth/callback") // TODO: make a simple page showing the token
+    } = await flickrOauth.request(CALLBACK_URL)
 
     console.log("Go to https://www.flickr.com/services/oauth/authorize?oauth_token=" + requestToken)
 
-    const verifyToken = await prompt("Your verify token: ")
+    const verifyToken = await prompt("Paste your code: ")
     const { body } = await flickrOauth.verify(requestToken, verifyToken, requestTokenSecret)
 
     writeJson(FLICKR_FILE_PATH, body)
@@ -53,7 +54,7 @@ const flickr2google = async () => {
   const googleOauth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID, // client ID
     process.env.GOOGLE_CLIENT_SECRET, // client secret
-    "http://localhost:3000/oauth/callback" // redirect URL // TODO: make a simple page showing the token
+    CALLBACK_URL
   )
 
   googleOauth.on("tokens", (tokens) => {
@@ -87,7 +88,7 @@ const flickr2google = async () => {
 
     console.log("Go to " + url)
 
-    const code = await prompt("Your code: ")
+    const code = await prompt("Paste your code: ")
 
     const { tokens } = await googleOauth.getToken(code)
     googleTokens = tokens

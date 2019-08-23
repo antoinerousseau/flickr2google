@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>flickr2google</title>
+    <style>
+      #message {
+        margin-top: 30vh;
+        text-align: center;
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="message"></div>
+  </body>
+  <script>
+    var params = location.search.substr(1).split("&")
+    params.forEach((param) => {
+      var tuple = param.split("=")
+      if (tuple[0] === "code" || tuple[0] === "oauth_verifier") {
+        document.getElementById("message").innerHTML = "<p>Your code is:</p><code>" + tuple[1] + "</code>"
+      }
+    })
+  </script>
+</html>
