@@ -9,8 +9,8 @@ It handles resuming if the script is stopped or exits, by storing processed phot
 
 And create a `.env` from `example.env`:
 
-- You need to [create a Flickr app](https://www.flickr.com/services/apps/create/apply/) to set the `FLICKR_APP_*` values
-- You need to [enable the Google Photos API](https://developers.google.com/photos/library/guides/get-started?hl=fr) to set the `GOOGLE_CLIENT_*` values
+- To set the `FLICKR_APP_*` values, [create a Flickr app](https://www.flickr.com/services/apps/create/apply/) as a Mobile Application with Read permissions
+- To set the `GOOGLE_CLIENT_*` values, [enable the Google Photos API](https://developers.google.com/photos/library/guides/get-started?hl=fr) and allow `https://antoinerousseau.github.io/flickr2google/` as a callback URL in your API credentials
 
 ## Run
 
