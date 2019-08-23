@@ -48,7 +48,7 @@ const flickr2google = async () => {
 
   // CONNECT TO GOOGLE
 
-  let accessToken
+  let googleTokens
 
   const googleOauth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID, // client ID
@@ -64,17 +64,24 @@ const flickr2google = async () => {
     }
   })
 
-  try {
-    const data = readJson(GOOGLE_FILE_PATH)
-    accessToken = data.access_token
-    if (data.expiry_date < Date.now() + 60000) {
+  const refreshTokenIfNeeded = async () => {
+    if (googleTokens.expiry_date < Date.now() + 60000) {
       // expires in less than a minute
       console.warn("Warning: access token expired => refreshing")
-      const { tokens } = await googleOauth.refreshToken(data.refresh_token)
-      tokens.refresh_token = data.refresh_token // because it's not sent again, only the first time
+      const { tokens } = await googleOauth.refreshToken(googleTokens.refresh_token)
+
+      tokens.refresh_token = googleTokens.refresh_token // because it's not sent again, only the first time
+
+      googleTokens = tokens // eslint-disable-line require-atomic-updates
+
       writeJson(GOOGLE_FILE_PATH, tokens)
-      accessToken = tokens.access_token
     }
+  }
+
+  try {
+    googleTokens = readJson(GOOGLE_FILE_PATH)
+
+    await refreshTokenIfNeeded()
   } catch (error) {
     const url = googleOauth.generateAuthUrl({
       access_type: "offline",
@@ -86,11 +93,10 @@ const flickr2google = async () => {
     const code = await prompt("Your code: ")
 
     const { tokens } = await googleOauth.getToken(code)
-    googleOauth.setCredentials(tokens)
+    googleTokens = tokens
+    googleOauth.setCredentials(googleTokens)
 
-    writeJson(GOOGLE_FILE_PATH, tokens)
-
-    accessToken = tokens.access_token
+    writeJson(GOOGLE_FILE_PATH, googleTokens)
   }
 
   // RETRIEVE PHOTO SETS (Flickr albums)
@@ -159,7 +165,8 @@ const flickr2google = async () => {
           title,
         },
       }
-      const { json: album } = await post("albums", albumRequest, accessToken)
+      await refreshTokenIfNeeded()
+      const { json: album } = await post("albums", albumRequest, googleTokens.access_token)
       console.log(`Created Google album; id: ${album.id}`)
       data.google_album = album.id
       writeJson(path, data)
@@ -173,7 +180,8 @@ const flickr2google = async () => {
 
       // FOR EACH PHOTO, UPLOAD TO GOOGLE PHOTOS
 
-      const uploadToken = await transfert(photo.url_o, `flickr_${photo.id}.jpg`, accessToken)
+      await refreshTokenIfNeeded()
+      const uploadToken = await transfert(photo.url_o, `flickr_${photo.id}.jpg`, googleTokens.access_token)
 
       const media = {
         // https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchCreate
@@ -187,15 +195,16 @@ const flickr2google = async () => {
           },
         ],
       }
+      await refreshTokenIfNeeded()
       const {
         json: { newMediaItemResults: results },
         status,
-      } = await post("mediaItems:batchCreate", media, accessToken)
+      } = await post("mediaItems:batchCreate", media, googleTokens.access_token)
 
       if (status === 200) {
         data.done.push(photo.id)
         writeJson(path, data)
-        console.log("Created media item:", results[0].mediaItem.description)
+        console.log("Created media item:", results[0].mediaItem.description || "(no description)")
       } else if (status === 207) {
         console.log("Some media items could not be created")
         results.forEach(({ uploadToken, status }) => {
