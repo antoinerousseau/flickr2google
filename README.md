@@ -25,3 +25,4 @@ You can use [PM2](https://github.com/Unitech/pm2)
 ## Limitations
 
 - This script does not handle videos
+- If your Google storage is limited and you hit the limit, the Google API will start to return "Bad Request". You must then either by more storage, or go to your [Google Photos settings](https://photos.google.com/settings), choose "High Quality" and click "Recover storage". This will convert your uploads to [16 Megapixels compressed photos](https://support.google.com/photos/answer/6220791), which the API cannot do on the fly. Also, you can only convert once per day.
