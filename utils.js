@@ -22,7 +22,7 @@ exports.prompt = (question) =>
       if (answer) {
         resolve(answer)
       } else {
-        reject(new Error("You must enter a verify token"))
+        reject(new Error("No input"))
       }
       rl.close()
     })

@@ -3,9 +3,9 @@
 const flickrConnect = require("./flickr")
 const googleConnect = require("./google")
 
+const { ALBUMS_PATH } = require("./constants")
 const { log, logError, readJson, writeJson, fileExists, mkdir } = require("./utils")
 
-const ALBUMS_PATH = "albums"
 const getAlbumPath = (id) => `${ALBUMS_PATH}/${id}.json`
 
 if (!fileExists(ALBUMS_PATH)) {
@@ -63,17 +63,7 @@ const main = async () => {
       photoset_id,
       user_id,
       media: "photos",
-      extras: [
-        // "date_upload",
-        // "date_taken",
-        // "last_update",
-        // "original_format",
-        // "geo",
-        // "tags",
-        // "machine_tags",
-        "o_dims",
-        "url_o",
-      ].join(","),
+      extras: "url_o",
     })
     log(`Processing "${title}" set (${total} photos); Flickr id: ${photoset_id}`)
 
@@ -120,13 +110,8 @@ const main = async () => {
         data.done.push(photo.id)
         writeJson(path, data)
         log("Created media item:", results[0].mediaItem.description || "(no description)")
-      } else if (status === 207) {
-        log("Some media items could not be created")
-        results.forEach(({ uploadToken, status }) => {
-          log(uploadToken + "\n |=> " + status)
-        })
       } else {
-        log("Could not create media item", results)
+        log("Could not create media item", results[0])
       }
     }
   }
