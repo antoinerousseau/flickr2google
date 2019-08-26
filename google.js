@@ -3,7 +3,7 @@ const request = require("request")
 const HttpError = require("standard-http-error")
 
 const { GOOGLE_FILE_PATH, CALLBACK_URL, GOOGLE_API_ENDPOINT } = require("./constants")
-const { log, readJson, writeJson, prompt } = require("./utils")
+const { log, logError, readJson, writeJson, prompt } = require("./utils")
 
 module.exports = async () => {
   let googleTokens
@@ -53,35 +53,39 @@ module.exports = async () => {
   const stream = async (url, filename) => {
     await refreshTokenIfNeeded()
     return new Promise((resolve, reject) => {
-      request
-        .get(url)
-        // .on("response", (response) => {
-        //   log("downloaded", response.statusCode, response.statusMessage, response.headers)
-        // })
+      const req = request.get(url)
+      req
         .on("error", (error) => {
           reject(error)
         })
-        .pipe(
-          request.post(
-            {
-              url: GOOGLE_API_ENDPOINT + "uploads",
-              headers: {
-                // "Content-type": "application/octet-stream",
-                // "Content-length": set by stream
-                "X-Goog-Upload-File-Name": filename,
-                "X-Goog-Upload-Protocol": "raw",
-                Authorization: `Bearer ${googleTokens.access_token}`,
-              },
-            },
-            (error, response, body) => {
-              if (error) {
-                reject(error)
-              } else {
-                resolve(body)
-              }
-            }
-          )
-        )
+        .on("response", (response) => {
+          if (response.statusCode >= 400) {
+            logError("Could not download", url)
+            reject(new HttpError(response.statusCode, response.statusMessage))
+          } else {
+            req.pipe(
+              request.post(
+                {
+                  url: GOOGLE_API_ENDPOINT + "uploads",
+                  headers: {
+                    "Content-type": "application/octet-stream",
+                    // "Content-length": set by stream
+                    "X-Goog-Upload-File-Name": filename,
+                    "X-Goog-Upload-Protocol": "raw",
+                    Authorization: `Bearer ${googleTokens.access_token}`,
+                  },
+                },
+                (error, response, body) => {
+                  if (error) {
+                    reject(error)
+                  } else {
+                    resolve(body)
+                  }
+                }
+              )
+            )
+          }
+        })
     })
   }
 
