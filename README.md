@@ -3,11 +3,15 @@
 This script is designed to migrate all your Flickr sets to Google albums.
 It handles resuming if the script is stopped or exits, by storing processed photos in `albums/[photoset_id].json`.
 
+## Requirements
+
+You need [Node.js](https://nodejs.org/)
+
 ## Setup
 
-    yarn
+Clone this repository, `cd` into it, and install its dependencies by typing `npm i`.
 
-And create a `.env` from `example.env`:
+Then create a `.env` file based on `example.env` (`cp {example,}.env`), and edit it:
 
 - To set the `FLICKR_APP_*` values, [create a Flickr app](https://www.flickr.com/services/apps/create/apply/) as a Mobile Application with Read permissions
 - To set the `GOOGLE_CLIENT_*` values, [enable the Google Photos API](https://developers.google.com/photos/library/guides/get-started?hl=fr) and allow `https://antoinerousseau.github.io/flickr2google/` as a callback URL in your API credentials
