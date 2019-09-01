@@ -7,8 +7,8 @@ const now = () => format(new Date(), "yyyy-MM-dd HH:mm:ss")
 exports.log = (...args) => {
   console.log(now(), ...args)
 }
-exports.logError = (error) => {
-  console.error(now(), error)
+exports.logError = (...args) => {
+  console.error(now(), ...args)
 }
 
 exports.prompt = (question) =>

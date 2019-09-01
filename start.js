@@ -129,11 +129,15 @@ const main = async () => {
         } = await post("mediaItems:batchCreate", media)
 
         if (status === 200) {
-          data.done.push(photo.id)
-          writeJson(path, data)
-          log("Created media item:", results[0].mediaItem.description || "(no description)")
+          if (results.length === 1 && results[0].mediaItem) {
+            data.done.push(photo.id)
+            writeJson(path, data)
+            log("Created media item:", results[0].mediaItem.description || "(no description)")
+          } else {
+            logError("Media Item creation status 200 OK but wrong response:", results)
+          }
         } else {
-          log("Could not create media item", results[0])
+          logError("Could not create media item", results[0])
         }
       }
     } while (page < photoset.pages)
