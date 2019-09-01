@@ -132,7 +132,7 @@ const main = async () => {
           if (results.length === 1 && results[0].mediaItem) {
             data.done.push(photo.id)
             writeJson(path, data)
-            log("Created media item:", results[0].mediaItem.description || "(no description)")
+            log("Created media item @", results[0].mediaItem.productUrl)
           } else {
             logError("Media Item creation status 200 OK but wrong response:", results)
           }
