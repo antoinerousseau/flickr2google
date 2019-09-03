@@ -35,6 +35,11 @@ const main = async () => {
     const path = getAlbumPath(set.id)
     if (fileExists(path)) {
       albums_cache[set.id] = readJson(path)
+      if (albums_cache[set.id].num_photos !== set.photos) {
+        // number of photos has changed since last time, update:
+        albums_cache[set.id].num_photos = set.photos
+        writeJson(path, albums_cache[set.id])
+      }
     } else {
       albums_cache[set.id] = {
         title: set.title && set.title._content,
@@ -69,10 +74,6 @@ const main = async () => {
         })
         photoset = body.photos
         photoset.title = "Photos not in a set"
-        if (!data.num_photos) {
-          data.num_photos = Number(photoset.total)
-          writeJson(path, data)
-        }
       } else {
         const { body } = await flickr.photosets.getPhotos({
           // https://www.flickr.com/services/api/flickr.photosets.getPhotos.html
@@ -85,9 +86,9 @@ const main = async () => {
         photoset = body.photoset
       }
 
-      const { title, photo: photos, pages, total } = photoset
+      const { title, photo: photos, pages } = photoset
 
-      log(`Processing "${title}" set (${total} photos); Flickr id: ${photoset_id}; page ${page}/${pages}`)
+      log(`Processing "${title}" set (${data.num_photos} photos); Flickr id: ${photoset_id}; page ${page}/${pages}`)
 
       if (!data.google_album) {
         const albumRequest = {
