@@ -62,6 +62,12 @@ const main = async () => {
 
     // FOR EACH PHOTOSET, RETRIEVE PHOTOS
 
+    log(
+      `Processing "${data.title || photoset_id}" set ${i + 1}/${photosets.length};`,
+      `Flickr id: ${photoset_id};`,
+      `Total: ${data.num_photos} photos`
+    )
+
     let photoset
     let page = 0
     do {
@@ -88,7 +94,7 @@ const main = async () => {
 
       const { title, photo: photos, pages } = photoset
 
-      log(`Processing "${title}" set (${data.num_photos} photos); Flickr id: ${photoset_id}; page ${page}/${pages}`)
+      log(`Processing page ${page}/${pages};`, `Done ${data.done.length}/${photos.length}`)
 
       if (!data.google_album) {
         const albumRequest = {
