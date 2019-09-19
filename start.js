@@ -12,6 +12,8 @@ if (!fileExists(ALBUMS_PATH)) {
   mkdir(ALBUMS_PATH)
 }
 
+const per_page = 500 // max
+
 const main = async () => {
   const { flickr, user_id } = await flickrConnect()
   const { stream, post } = await googleConnect()
@@ -88,13 +90,14 @@ const main = async () => {
           media: "photos",
           extras: "url_o",
           page,
+          per_page,
         })
         photoset = body.photoset
       }
 
       const { title, photo: photos, pages } = photoset
 
-      log(`Processing page ${page}/${pages};`, `Done ${data.done.length}/${photos.length}`)
+      log(`Processing page ${page}/${pages};`, `Done ${data.done.length % per_page}/${photos.length}`)
 
       if (!data.google_album) {
         const albumRequest = {
