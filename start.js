@@ -157,7 +157,9 @@ const main = async () => {
 main()
   .then(() => {
     log("END!")
+    process.exit(0)
   })
   .catch((error) => {
     logError(error)
+    process.exit(1)
   })

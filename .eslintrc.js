@@ -15,5 +15,6 @@ module.exports = {
   },
   rules: {
     "prettier/prettier": "error",
+    "no-process-exit": 0,
   },
 }
