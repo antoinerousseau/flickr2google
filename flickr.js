@@ -6,10 +6,14 @@ const { log, readJson, writeJson, prompt } = require("./utils")
 module.exports = async () => {
   let flickrCredentials
 
-  const flickrOauth = new Flickr.OAuth(
-    process.env.FLICKR_APP_KEY, // app key
-    process.env.FLICKR_APP_SECRET // app secret
-  )
+  const consumerKey = process.env.FLICKR_APP_KEY
+  const consumerSecret = process.env.FLICKR_APP_SECRET
+
+  if (!consumerKey || !consumerSecret) {
+    throw new Error("Could not read FLICKR_APP_KEY and FLICKR_APP_SECRET from environment.")
+  }
+
+  const flickrOauth = new Flickr.OAuth(consumerKey, consumerSecret)
 
   try {
     flickrCredentials = readJson(FLICKR_FILE_PATH)

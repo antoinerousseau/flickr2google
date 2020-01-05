@@ -5,18 +5,18 @@
   "author": "Antoine Rousseau <antoine@rousseau.im>",
   "license": "MIT",
   "dependencies": {
-    "date-fns": "^2.0.1",
-    "dotenv": "^8.1.0",
+    "date-fns": "^2.8.1",
+    "dotenv": "^8.2.0",
     "flickr-sdk": "^3.9.0",
-    "googleapis": "^42.0.0",
+    "googleapis": "^46.0.0",
     "request": "^2.88.0",
     "standard-http-error": "^2.0.1"
   },
   "devDependencies": {
-    "eslint": "^6.3.0",
-    "eslint-config-prettier": "^6.1.0",
-    "eslint-plugin-node": "^9.2.0",
-    "eslint-plugin-prettier": "^3.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
     "prettier": "^1.18.2"
   },
   "engines": {

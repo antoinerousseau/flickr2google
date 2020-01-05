@@ -8,11 +8,14 @@ const { log, readJson, writeJson, prompt } = require("./utils")
 module.exports = async () => {
   let googleTokens
 
-  const googleOauth = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID, // client ID
-    process.env.GOOGLE_CLIENT_SECRET, // client secret
-    CALLBACK_URL
-  )
+  const clientId = process.env.GOOGLE_CLIENT_ID
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET
+
+  if (!clientId || !clientSecret) {
+    throw new Error("Could not read GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET from environment.")
+  }
+
+  const googleOauth = new google.auth.OAuth2(clientId, clientSecret, CALLBACK_URL)
 
   googleOauth.on("tokens", (tokens) => {
     if (!tokens.refresh_token && googleTokens) {
