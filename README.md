@@ -20,6 +20,10 @@ Then create a `.env` file based on `example.env` (`cp {example,}.env`), and edit
 
     ./start.js
 
+By default, it will process all photos and videos. If you want only photos or only videos, use the `MEDIA` environment variable. Set it to `photos` or `videos`, e.g.:
+
+    MEDIA=photos ./start.js
+
 ## Daemonize
 
 You can use [PM2](https://github.com/Unitech/pm2)
@@ -28,5 +32,4 @@ You can use [PM2](https://github.com/Unitech/pm2)
 
 ## Limitations
 
-- This script does not handle videos ([yet](https://github.com/antoinerousseau/flickr2google/pull/1))
 - If your [Google storage](https://drive.google.com/settings/storage) is limited and you hit the limit, the Google API will return a "Bad Request". You must then either buy more storage, or go to your [Google Photos settings](https://photos.google.com/settings), choose "High Quality" and click "Recover storage". This will convert your uploads to [16 Megapixels compressed photos](https://support.google.com/photos/answer/6220791), which the API cannot do on the fly. Also, you can only convert once per day.
